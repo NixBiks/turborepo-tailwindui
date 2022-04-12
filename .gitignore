@@ -1,0 +1,10 @@
+node_modules
+.DS_Store
+build
+dist
+.next
+.turbo
+*.log
+*.tsbuildinfo
+.eslintcache
+.vercel
