@@ -16,13 +16,11 @@
     "dev:js": "tsup src/index.ts --format esm,cjs --external react --watch --onSuccess \"tsc --emitDeclarationOnly --declaration\"",
     "dev:css": "pnpm tailwindcss -i ./src/input.css -o ./dist/styles/main.css --watch",
     "build:css": "pnpm tailwindcss -i ./src/input.css -o ./dist/styles/main.css",
-    "build:js": "tsup src/index.ts --format esm,cjs --external react--dts "
+    "build:js": "tsup src/index.ts --format esm,cjs --external react --dts"
   },
+  "main": "dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": {
-      "import": "./dist/index.js"
-    },
     "./styles/main.css": {
       "import": "./dist/styles/main.css"
     }
