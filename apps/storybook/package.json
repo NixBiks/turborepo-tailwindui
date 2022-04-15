@@ -1,0 +1,20 @@
+{
+  "name": "storybook",
+  "dependencies": {
+    "ui": "workspace:*"
+  },
+  "devDependencies": {
+    "@storybook/react": "^6.4.22",
+    "@storybook/addon-links": "^6.4.22",
+    "@storybook/addon-essentials": "^6.4.22",
+    "@storybook/addon-actions": "^6.4.22",
+    "@storybook/addon-interactions": "^6.4.22",
+    "@storybook/testing-library": "^0.0.9",
+    "@babel/core": "^7.17.9",
+    "babel-loader": "^8.2.4"
+  },
+  "scripts": {
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  }
+}
