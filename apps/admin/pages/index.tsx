@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { Table } from "ui";
+import { DomainTable, Table } from "ui";
 
 type People = {
   name: string;
@@ -57,6 +57,7 @@ const Home: NextPage = () => {
         <meta name="description" content="Tailwind shared UI" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <DomainTable />
       <Table
         pageTitle="Users"
         buttonLabel="Add user"
