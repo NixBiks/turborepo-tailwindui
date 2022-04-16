@@ -7,6 +7,7 @@ type People = {
   title: string;
   email: string;
   role: string;
+  href: string;
 };
 
 const people: People[] = [
@@ -15,36 +16,42 @@ const people: People[] = [
     title: "Front-end Developer",
     email: "lindsay.walton@example.com",
     role: "Member",
+    href: "#"
+  },
+  {
+    name: "Lindsay Walton",
+    title: "ABC-end Developer",
+    email: "lindsay.walton@example.com",
+    role: "Member",
+    href: "#"
   },
   {
     name: "Lindsay Walton",
     title: "Front-end Developer",
     email: "lindsay.walton@example.com",
     role: "Member",
+    href: "#"
+  },
+  {
+    name: "Lindsay Walton",
+    title: "OP-end Developer",
+    email: "lindsay.walton@example.com",
+    role: "Member",
+    href: "#"
   },
   {
     name: "Lindsay Walton",
     title: "Front-end Developer",
     email: "lindsay.walton@example.com",
     role: "Member",
+    href: "#"
   },
   {
     name: "Lindsay Walton",
     title: "Front-end Developer",
     email: "lindsay.walton@example.com",
     role: "Member",
-  },
-  {
-    name: "Lindsay Walton",
-    title: "Front-end Developer",
-    email: "lindsay.walton@example.com",
-    role: "Member",
-  },
-  {
-    name: "Lindsay Walton",
-    title: "Front-end Developer",
-    email: "lindsay.walton@example.com",
-    role: "Member",
+    href: "#"
   },
   // More people...
 ];
@@ -66,6 +73,10 @@ const defaultColumns = table.createColumns([
     cell: (info) => info.value,
     header: "Role",
   }),
+  table.createDataColumn("href", {
+    defaultIsVisible: false,
+    enableHiding: false,
+  })
 ]);
 
 const DomainTable = () => {
