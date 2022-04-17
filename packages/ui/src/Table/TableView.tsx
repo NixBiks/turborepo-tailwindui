@@ -151,16 +151,65 @@ const defaultGetCellProps = <T extends AnyGenerics>(
   };
 };
 
+const HeaderCell = <Base extends AnyGenerics>({
+  header,
+  sortable,
+}: {
+  header: Header<Base>;
+  sortable?: boolean;
+}) => {
+  if (header.isPlaceholder) return <></>;
+  if (!sortable) return <>{header.renderHeader()}</>;
+
+  return (
+    <div
+      {...(header.column.getCanSort()
+        ? header.column.getToggleSortingProps({
+            className: "cursor-pointer select-none group inline-flex",
+          })
+        : {})}
+    >
+      {header.renderHeader()}
+      {header.column.getCanSort() ? (
+        <SortKey state={header.column.getIsSorted()} />
+      ) : null}
+    </div>
+  );
+};
+
+const SkeletonBody = ({nRows} : {nRows: number}) => {
+  return (
+    <>
+      {Array.from(Array(nRows)).map((_, i) => (
+        <tr key={i}>
+          <td className="h-14  mb-6 rounded" colSpan={100}>
+            <div className="py-4 px-6 w-full h-full">
+              <div
+                className={classNames(
+                  "w-full h-full rounded-xl",
+                  i % 2 === 0 ? "bg-gray-300" : "bg-gray-200"
+                )}
+              />
+            </div>
+          </td>
+        </tr>
+      ))}
+    </>
+  );
+};
+
 export type TableViewProps<Base extends AnyGenerics> = {
   instance: TableInstance<Base>;
   getHeaderProps?: (header: Header<Base>, index: number) => any;
   getCellProps?: (header: Cell<Base>, index: number) => any;
   sortable?: boolean;
+  loading?: boolean;
 };
 
 const TableView = <Base extends AnyGenerics>({
   instance,
   sortable,
+  loading,
   ...props
 }: TableViewProps<Base>) => {
   const getHeaderProps = props.getHeaderProps || defaultGetHeaderProps;
@@ -176,29 +225,12 @@ const TableView = <Base extends AnyGenerics>({
           {instance.getHeaderGroups().map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((header, index) => {
-                const HeaderComponent = header.renderHeader();
                 return (
                   <th
                     scope="col"
                     {...header.getHeaderProps(getHeaderProps(header, index))}
                   >
-                    {header.isPlaceholder ? null : sortable ? (
-                      <div
-                        {...(header.column.getCanSort()
-                          ? header.column.getToggleSortingProps({
-                              className:
-                                "cursor-pointer select-none group inline-flex",
-                            })
-                          : {})}
-                      >
-                        {header.renderHeader()}
-                        {header.column.getCanSort() ? (
-                          <SortKey state={header.column.getIsSorted()} />
-                        ) : null}
-                      </div>
-                    ) : (
-                      header.renderHeader()
-                    )}
+                    <HeaderCell header={header} sortable={sortable} />
                   </th>
                 );
               })}
@@ -207,17 +239,24 @@ const TableView = <Base extends AnyGenerics>({
         </thead>
         <tbody
           {...instance.getTableBodyProps()}
-          className="divide-y divide-gray-200 bg-white"
+          className={classNames(
+            "divide-y divide-gray-200 bg-white",
+            loading ? "animate-pulse" : ""
+          )}
         >
-          {instance.getRowModel().rows.map((row) => (
-            <tr {...row.getRowProps()}>
-              {row.getVisibleCells().map((cell, index) => (
-                <td {...cell.getCellProps(getCellProps(cell, index))}>
-                  {cell.renderCell()}
-                </td>
-              ))}
-            </tr>
-          ))}
+          {loading ? (
+            <SkeletonBody nRows={10} />
+          ) : (
+            instance.getRowModel().rows.map((row) => (
+              <tr {...row.getRowProps()}>
+                {row.getVisibleCells().map((cell, index) => (
+                  <td {...cell.getCellProps(getCellProps(cell, index))}>
+                    {cell.renderCell()}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

@@ -48,4 +48,5 @@ Primary.args = {
   editable: true,
   sortable: true,
   sortableUi: true,
+  loading: true,
 };

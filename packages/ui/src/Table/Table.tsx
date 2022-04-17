@@ -14,6 +14,7 @@ const Table = <Editable extends boolean, T extends BaseGenerics<Editable>>({
   getCellProps,
   getHeaderProps,
   sortableUi,
+  loading,
   ...rest
 }: TableProps<Editable, T>) => {
   // set sortable ui to true if not set while sortable is set
@@ -26,6 +27,7 @@ const Table = <Editable extends boolean, T extends BaseGenerics<Editable>>({
       getCellProps={getCellProps}
       getHeaderProps={getHeaderProps}
       sortable={sortableUi}
+      loading={loading}
     />
   );
 };
