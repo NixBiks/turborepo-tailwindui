@@ -1,6 +1,6 @@
-import { createTable } from "@tanstack/react-table";
 import React from "react";
-import EditableTable from "../EditableTable";
+import { createTable } from "@tanstack/react-table";
+import TablePage from "../TablePage";
 
 type People = {
   name: string;
@@ -16,42 +16,42 @@ const people: People[] = [
     title: "Front-end Developer",
     email: "lindsay.walton@example.com",
     role: "Member",
-    href: "#"
+    href: "#",
   },
   {
     name: "Lindsay Walton",
     title: "ABC-end Developer",
     email: "lindsay.walton@example.com",
     role: "Member",
-    href: "#"
+    href: "#",
   },
   {
     name: "Lindsay Walton",
     title: "Front-end Developer",
     email: "lindsay.walton@example.com",
     role: "Member",
-    href: "#"
+    href: "#",
   },
   {
     name: "Lindsay Walton",
     title: "OP-end Developer",
     email: "lindsay.walton@example.com",
     role: "Member",
-    href: "#"
+    href: "#",
   },
   {
     name: "Lindsay Walton",
     title: "Front-end Developer",
     email: "lindsay.walton@example.com",
     role: "Member",
-    href: "#"
+    href: "#",
   },
   {
     name: "Lindsay Walton",
     title: "Front-end Developer",
     email: "lindsay.walton@example.com",
     role: "Member",
-    href: "#"
+    href: "#",
   },
   // More people...
 ];
@@ -76,11 +76,23 @@ const defaultColumns = table.createColumns([
   table.createDataColumn("href", {
     defaultIsVisible: false,
     enableHiding: false,
-  })
+  }),
 ]);
 
 const DomainTable = () => {
-  return <EditableTable table={table} columns={defaultColumns} data={people} />;
+  return (
+    <TablePage
+      table={table}
+      columns={defaultColumns}
+      data={people}
+      buttonLabel={"Add user"}
+      description="A list of all the users in your account including their name, title,
+  email and role."
+      title="Users"
+      editable
+      selectable
+    />
+  );
 };
 
 export default DomainTable;
