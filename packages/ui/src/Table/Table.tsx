@@ -20,6 +20,7 @@ const Table = <Editable extends boolean, T extends BaseGenerics<Editable>>({
   // set sortable ui to true if not set while sortable is set
   if (rest.sortable && typeof sortableUi === "undefined") sortableUi = true;
   const instance = useTable(rest);
+  
 
   return (
     <TableView

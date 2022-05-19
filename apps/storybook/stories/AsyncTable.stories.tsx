@@ -1,8 +1,7 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { Table, createTable } from "ui/dist/index.js";
+import { AsyncTable, createTable } from "ui/dist/index.js";
 import { makePersons, Person } from "../makeData";
 
-const people = makePersons(10);
 const table = createTable<{ Row: Person }>();
 const defaultColumns = table.createColumns([
   table.createDataColumn("name", {
@@ -27,9 +26,16 @@ const defaultColumns = table.createColumns([
   }),
 ]);
 
-const config: ComponentMeta<typeof Table> = {
-  title: "Example/Table",
-  component: Table,
+const fetchData = async (args: any) => {
+  const people = makePersons(10);
+  return await new Promise<Person[]>((resolve) =>
+    setTimeout(() => resolve(people), 1000)
+  );
+};
+
+const config: ComponentMeta<typeof AsyncTable> = {
+  title: "Example/AsyncTable",
+  component: AsyncTable,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   // argTypes: {
   //   backgroundColor: { control: 'color' },
@@ -38,8 +44,13 @@ const config: ComponentMeta<typeof Table> = {
 
 export default config;
 
-export const Primary: ComponentStory<typeof Table> = (args) => (
-  <Table columns={defaultColumns} data={people} table={table} {...args} />
+export const Primary: ComponentStory<typeof AsyncTable> = (args) => (
+  <AsyncTable
+    columns={defaultColumns}
+    table={table}
+    fetchData={fetchData}
+    {...args}
+  />
 );
 
 Primary.args = {
@@ -47,5 +58,4 @@ Primary.args = {
   editable: true,
   sortable: true,
   sortableUi: true,
-  loading: false,
 };

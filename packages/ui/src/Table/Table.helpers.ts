@@ -3,10 +3,9 @@ import {
   CoreOptions,
   Options,
   Table,
-  Updater,
   useTable as useTableCore,
   createTable as createTableCore,
-  sortRowsFn,
+  sortRowsFn as sortRowsFnCore,
 } from "@tanstack/react-table";
 import React from "react";
 import { extendColumns } from "./TableView";
@@ -26,7 +25,7 @@ export type UseTableProps<
   selectable?: boolean;
   editable?: Editable;
   sortable?: boolean;
-  options?: Updater<Options<T>>;
+  options?: Partial<Omit<Options<T>, "data" | "columns">>;
 } & Pick<CoreOptions<T>, "columns" | "data">;
 
 export const useTable = <
@@ -42,27 +41,28 @@ export const useTable = <
   options,
 }: UseTableProps<Editable, T>) => {
   // add checkbox column and edit column
-  const columns = React.useMemo(
-    () =>
-      extendColumns({
-        table,
-        columns: defaultColumns,
-        addEdit: !!editable,
-        addSelect: !!selectable,
-      }),
-    [defaultColumns, table, editable, selectable]
+  // const columns = React.useMemo(() => {
+  //   console.log("Creating columns");
+
+  //   return extendColumns({
+  //     table,
+  //     columns: defaultColumns,
+  //     addEdit: !!editable,
+  //     addSelect: !!selectable,
+  //   });
+  // }, [defaultColumns, table, editable, selectable]);
+
+  const sortRowsFn = React.useMemo(
+    () => (sortable ? sortRowsFnCore : undefined),
+    [sortable]
   );
 
   const instance = useTableCore(table, {
-    columns,
+    columns: defaultColumns,
     data,
-  });
-
-  instance.setOptions((prev) => ({
-    ...prev,
-    sortRowsFn: sortable ? sortRowsFn : undefined,
+    // sortRowsFn,
     ...options,
-  }));
+  });
 
   return instance;
 };
