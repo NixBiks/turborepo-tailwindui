@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { DomainTable } from "ui";
+import { Table } from "components/Table";
 
 
 const Home: NextPage = () => {
@@ -11,7 +11,7 @@ const Home: NextPage = () => {
         <meta name="description" content="Tailwind shared UI" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <DomainTable />
+      <Table />
     </div>
   );
 };
