@@ -57,6 +57,8 @@ const defaultColumns = [
   }),
 ];
 
+
+
 const Home: NextPage = () => {
   const [data, setData] = React.useState<Person[]>([]);
   const [columns] = React.useState<typeof defaultColumns>(defaultColumns);
@@ -64,6 +66,8 @@ const Home: NextPage = () => {
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    // state: {sorting: []}
+    // onSortingChange: handleSortChange,
   });
 
   React.useEffect(() => {

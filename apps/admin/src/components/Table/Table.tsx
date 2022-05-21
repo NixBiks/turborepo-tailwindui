@@ -1,5 +1,17 @@
-import { TableGenerics, TableInstance } from "@tanstack/react-table";
+import {
+  TableGenerics,
+  TableInstance,
+  Header,
+  Column,
+  SortDirection,
+  SortingState,
+} from "@tanstack/react-table";
 import { Checkbox } from "components/Checkbox";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/outline";
+import Link from "next/link";
+import React from "react";
+import { useRouter } from "next/router";
+import { ParsedUrlQuery } from "querystring";
 
 export type TableProps<TGenerics extends TableGenerics> = {
   instance: TableInstance<TGenerics>;
@@ -7,11 +19,109 @@ export type TableProps<TGenerics extends TableGenerics> = {
   selectable?: boolean;
 };
 
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(" ");
+}
+
+type SortState = ReturnType<Column<any>["getIsSorted"]>;
+
+const SortKey: React.FC<{
+  state: SortState;
+  sortDescFirst: boolean;
+}> = ({ state, sortDescFirst }) => {
+  return (
+    <span
+      className={classNames(
+        "ml-2 flex-none rounded",
+        !state
+          ? "invisible text-gray-400 group-hover:visible"
+          : "bg-gray-200 text-gray-900 group-hover:bg-gray-300"
+      )}
+    >
+      {state === "desc" || (!state && !!sortDescFirst) ? (
+        <ChevronUpIcon className="h-5 w-5" aria-hidden="true" />
+      ) : (
+        <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
+      )}
+    </span>
+  );
+};
+
+const getSortAnchor = (header: Header<any>, sortDescFirst: boolean): string => {
+  const state = header.column.getIsSorted();
+  let nextState: SortDirection;
+  switch (state) {
+    case false:
+      nextState = sortDescFirst ? "desc" : "asc";
+      break;
+    case "asc":
+      nextState = "desc";
+      break;
+    case "desc":
+      nextState = "asc";
+  }
+  return `?sort=${header.id}:${nextState}`;
+};
+
+const HeaderCell = ({
+  header,
+  sortDescFirst,
+}: {
+  header: Header<any>;
+  sortDescFirst: boolean;
+}) => {
+  return (
+    <th
+      scope="col"
+      colSpan={header.colSpan}
+      className="not-first:px-3 py-3 first:pl-4 first:pr-3 text-left text-sm font-semibold uppercase tracking-wide text-gray-500 first:sm:pl-6"
+    >
+      {header.isPlaceholder ? null : header.column.getCanSort() ? (
+        <Link href={getSortAnchor(header, sortDescFirst)}>
+          <a
+            className="group inline-flex"
+            onClick={header.column.getToggleSortingHandler()}
+          >
+            {header.renderHeader()}
+            <SortKey
+              state={header.column.getIsSorted()}
+              sortDescFirst={sortDescFirst}
+            />
+          </a>
+        </Link>
+      ) : (
+        header.renderHeader()
+      )}
+    </th>
+  );
+};
+const queryToColumnSort = (query: ParsedUrlQuery): SortingState => {
+  const sort = query.sort;
+  if (typeof sort === "string") {
+    const [id, direction] = sort.split(":");
+    return [{ id, desc: direction === "desc" }];
+  }
+  return [];
+};
+
+const useURLSortingState = (instance: TableInstance<any>) => {
+  const { query } = useRouter();
+  const sorting = queryToColumnSort(query);
+
+  instance.setOptions((prev) => ({
+    ...prev,
+    state: { ...prev.state, sorting },
+    manualSorting: true,
+  }));
+};
+
 export const Table = <TGenerics extends TableGenerics>({
   instance,
   editable,
   selectable,
 }: TableProps<TGenerics>) => {
+  useURLSortingState(instance);
+
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="mt-8 flex flex-col">
@@ -36,18 +146,18 @@ export const Table = <TGenerics extends TableGenerics>({
                           )}
                         </th>
                       )}
-                      {headerGroup.headers.map((header, index) => {
+                      {headerGroup.headers.map((header) => {
+                        const sortDescFirst =
+                          header.column.columnDef.sortDescFirst ??
+                          instance.options.sortDescFirst ??
+                          header.column.getAutoSortDir() === "desc";
+
                         return (
-                          <th
-                            scope="col"
+                          <HeaderCell
+                            header={header}
                             key={header.id}
-                            colSpan={header.colSpan}
-                            className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500"
-                          >
-                            {header.isPlaceholder
-                              ? null
-                              : header.renderHeader()}
-                          </th>
+                            sortDescFirst={sortDescFirst}
+                          />
                         );
                       })}
                       {instance && (
@@ -76,7 +186,7 @@ export const Table = <TGenerics extends TableGenerics>({
                       {row.getVisibleCells().map((cell, index) => (
                         <td
                           key={cell.id}
-                          className="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                          className="whitespace-nowrap px-3 py-4 first:pl-4 first:pr-3 text-sm first:font-medium first:text-gray-900 not-first:text-gray-500 first:sm:pl-6"
                         >
                           {cell.renderCell()}
                         </td>
